@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "https://natedee3003.github.io/natedee3003.github.io/",
+  "homepage": "https://natedee3003.github.io/",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
