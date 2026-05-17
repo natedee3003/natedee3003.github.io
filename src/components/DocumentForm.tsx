@@ -5,7 +5,7 @@ import { z } from 'zod';
 import { pdf } from '@react-pdf/renderer';
 import Swal from 'sweetalert2';
 import { getMeta, updateMeta } from '../servers/firestoreService';
-import { DocumentPdf, type DocumentFormData } from './DocumentPdf';
+import { DocumentPdf, formatDocNo, type DocumentFormData } from './DocumentPdf';
 import { ProductTable } from './ProductTable';
 import { CustomerPickerModal } from './CustomerPickerModal';
 
@@ -42,9 +42,6 @@ function todayISO(): string {
   return new Date().toISOString().split('T')[0];
 }
 
-function padRunningNo(n: number): string {
-  return String(n).padStart(3, '0');
-}
 
 export function DocumentForm() {
   const [status, setStatus] = useState<'idle' | 'loading'>('idle');
@@ -123,7 +120,7 @@ export function DocumentForm() {
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
         a.href = url;
-        a.download = `${docType}-${data.year}-${padRunningNo(data.runningNumber)}.pdf`;
+        a.download = `${formatDocNo(docType, data.year, data.monthNumber, data.runningNumber)}-${data.customerInfo.companyName}.pdf`;
         a.click();
         URL.revokeObjectURL(url);
       }

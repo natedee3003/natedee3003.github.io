@@ -40,7 +40,7 @@ const DOC_PREFIX: Record<string, string> = {
   ใบเสร็จรับเงิน: 'RC',
 };
 
-function formatDocNo(docType: string, year: number, month: number, running: number): string {
+export function formatDocNo(docType: string, year: number, month: number, running: number): string {
   const prefix = DOC_PREFIX[docType] ?? 'RS';
   return `${prefix}${year}${String(month).padStart(2, '0')}${String(running).padStart(3, '0')}`;
 }
