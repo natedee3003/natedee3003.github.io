@@ -72,6 +72,7 @@ export function DocumentForm() {
     if (checked) {
       if (type === DOC_TYPES[0]) {
         setValue('documentType', [DOC_TYPES[0]], { shouldValidate: true });
+        setValue('deposit', 0);
       } else {
         const next = selectedTypes.filter((t) => t !== DOC_TYPES[0]);
         setValue('documentType', next.includes(type) ? next : [...next, type], { shouldValidate: true });
@@ -278,20 +279,24 @@ export function DocumentForm() {
         </div>
 
         {/* Deposit */}
-        <div className='doc-form__field'>
-          <label htmlFor='deposit'>หักมัดจำกี่เปอร์เซ็น</label>
-          <input
-            id='deposit'
-            type='number'
-            min={0}
-            max={100}
-            {...register('deposit', { valueAsNumber: true })}
-            required
-          />
-          {formState.errors.deposit && (
-            <span className='doc-form__field-error'>{formState.errors.deposit.message}</span>
-          )}
-        </div>
+        {!selectedTypes.includes(DOC_TYPES[0]) && (
+          <div className='doc-form__field'>
+            <label htmlFor='deposit'>หักมัดจำกี่เปอร์เซ็น</label>
+            <input
+              id='deposit'
+              type='number'
+              min={0}
+              max={100}
+              {...register('deposit', { valueAsNumber: true })}
+              required
+            />
+            {formState.errors.deposit && (
+              <span className='doc-form__field-error'>
+                {formState.errors.deposit.message}
+              </span>
+            )}
+          </div>
+        )}
 
         <div className='doc-form__actions'>
           <button type='submit' className='doc-form__submit' disabled={status === 'loading'}>
