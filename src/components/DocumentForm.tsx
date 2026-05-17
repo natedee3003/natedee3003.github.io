@@ -50,7 +50,7 @@ export function DocumentForm() {
   const [status, setStatus] = useState<'idle' | 'loading'>('idle');
   const [showCustomerModal, setShowCustomerModal] = useState(false);
 
-  const { register, handleSubmit, control, formState, setValue, reset } = useForm<DocumentFormData>(
+  const { register, handleSubmit, control, formState, setValue, watch, reset } = useForm<DocumentFormData>(
     {
       resolver: zodResolver(schema),
       defaultValues: {
@@ -65,6 +65,21 @@ export function DocumentForm() {
       },
     },
   );
+
+  const selectedTypes = watch('documentType');
+
+  function handleDocTypeChange(type: (typeof DOC_TYPES)[number], checked: boolean) {
+    if (checked) {
+      if (type === DOC_TYPES[0]) {
+        setValue('documentType', [DOC_TYPES[0]], { shouldValidate: true });
+      } else {
+        const next = selectedTypes.filter((t) => t !== DOC_TYPES[0]);
+        setValue('documentType', next.includes(type) ? next : [...next, type], { shouldValidate: true });
+      }
+    } else {
+      setValue('documentType', selectedTypes.filter((t) => t !== type), { shouldValidate: true });
+    }
+  }
 
   useEffect(() => {
     async function initMeta() {
@@ -150,7 +165,12 @@ export function DocumentForm() {
           <div className='doc-form__radio-group'>
             {DOC_TYPES.map((type) => (
               <label key={type} className='doc-form__radio-label'>
-                <input type='checkbox' value={type} {...register('documentType')} />
+                <input
+                  type='checkbox'
+                  value={type}
+                  checked={selectedTypes.includes(type)}
+                  onChange={(e) => handleDocTypeChange(type, e.target.checked)}
+                />
                 <span>{type}</span>
               </label>
             ))}
