@@ -26,7 +26,9 @@ export function CustomersPage() {
   async function loadCustomers() {
     setLoading(true);
     try {
-      setCustomers(await getCustomers());
+      const data = await getCustomers();
+      data.sort((a, b) => a.companyName.localeCompare(b.companyName, 'th'));
+      setCustomers(data);
     } catch {
       setError('โหลดข้อมูลลูกค้าไม่สำเร็จ');
     } finally {
@@ -139,21 +141,26 @@ export function CustomersPage() {
       <div className='customers-page__header'>
         <h1 className='customers-page__title'>รายชื่อลูกค้า</h1>
         <div className='customers-page__header-actions'>
-          <input
-            type='file'
-            accept='.csv'
-            ref={fileInputRef}
-            style={{ display: 'none' }}
-            onChange={handleImportCsv}
-          />
-          <button
-            type='button'
-            className='customers-page__btn customers-page__btn--import'
-            disabled={importing}
-            onClick={() => fileInputRef.current?.click()}
-          >
-            {importing ? 'กำลังนำเข้า...' : 'นำเข้า CSV'}
-          </button>
+          <div className='customers-page__import-wrap'>
+            <input
+              type='file'
+              accept='.csv'
+              ref={fileInputRef}
+              style={{ display: 'none' }}
+              onChange={handleImportCsv}
+            />
+            <button
+              type='button'
+              className='customers-page__btn customers-page__btn--import'
+              disabled={importing}
+              onClick={() => fileInputRef.current?.click()}
+            >
+              {importing ? 'กำลังนำเข้า...' : 'นำเข้า CSV'}
+            </button>
+            <small className='customers-page__csv-hint'>
+              คอลัมน์: companyName, address, taxId, phone
+            </small>
+          </div>
           <button type='button' className='customers-page__back' onClick={() => navigate('/')}>
             ← กลับหน้าฟอร์ม
           </button>
@@ -186,10 +193,10 @@ export function CustomersPage() {
               )}
               {customers.map((c) => (
                 <tr key={c.docId}>
-                  <td>{c.companyName}</td>
-                  <td>{c.address}</td>
-                  <td>{c.taxId || '—'}</td>
-                  <td>{c.phone || '—'}</td>
+                  <td className='customers-page__actions'>{c.companyName}</td>
+                  <td className='customers-page__actions'>{c.address}</td>
+                  <td className='customers-page__actions'>{c.taxId || '—'}</td>
+                  <td className='customers-page__actions'>{c.phone || '—'}</td>
                   <td className='customers-page__actions'>
                     <button
                       type='button'
