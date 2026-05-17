@@ -36,8 +36,8 @@ export interface DocumentFormData {
 const DOC_PREFIX: Record<string, string> = {
   ใบเสนอราคา: 'QT',
   ใบแจ้งหนี้: 'IV',
-  ใบส่งของ: 'DV',
-  ใบเสร็จรับเงิน: 'RC',
+  ใบส่งของ: 'DO',
+  ใบเสร็จรับเงิน: 'RE',
 };
 
 export function formatDocNo(docType: string, year: number, month: number, running: number): string {
@@ -175,7 +175,7 @@ const styles = StyleSheet.create({
   summaryValue: {
     fontSize: 10,
     color: '#111827',
-    minWidth: 80,
+    width: 80,
     textAlign: 'right',
   },
   summaryTotalRow: {
@@ -193,6 +193,7 @@ const styles = StyleSheet.create({
     color: '#111827',
     flex: 1,
     textAlign: 'right',
+    marginLeft: 'auto',
     marginRight: 16,
   },
   summaryTotalValue: {
@@ -200,7 +201,7 @@ const styles = StyleSheet.create({
     fontWeight: 700,
     fontFamily: 'Sarabun',
     color: '#1a1a1a',
-    minWidth: 80,
+    width: 80,
     textAlign: 'right',
   },
   signatureSection: {
@@ -216,7 +217,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
   },
   signatureLine: {
-    borderBottomWidth: 1,
+    borderBottomWidth: 0.5,
     borderBottomColor: '#9ca3af',
     width: '100%',
     marginBottom: 6,
@@ -225,13 +226,12 @@ const styles = StyleSheet.create({
     fontSize: 9,
     color: '#6b7280',
     textAlign: 'center',
-    marginBottom: 6,
+    marginBottom: 9,
   },
   dateLine: {
-    borderBottomWidth: 1,
-    borderBottomColor: '#9ca3af',
-    width: '70%',
-    margin: '0 auto',
+    fontSize: 9,
+    color: '#9ca3af',
+    textAlign: 'center',
   },
 });
 
@@ -329,11 +329,11 @@ export function DocumentPdf({ data }: { data: DocumentFormData }) {
         {/* Signatures */}
         {docType === 'ใบเสนอราคา' && (
           <View style={styles.signatureSection}>
-            {/* <View/> */}
+            <View/>
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine} />
               <Text style={styles.signatureLabel}>ผู้เสนอราคา</Text>
-              <View style={styles.dateLine} />
+              <Text style={styles.dateLine}>_____/_____/__________</Text>
             </View>
           </View>
         )}
@@ -342,12 +342,12 @@ export function DocumentPdf({ data }: { data: DocumentFormData }) {
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine} />
               <Text style={styles.signatureLabel}>ผู้รับแจ้งหนี้</Text>
-              <View style={styles.dateLine} />
+              <Text style={styles.dateLine}>_____/_____/__________</Text>
             </View>
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine} />
               <Text style={styles.signatureLabel}>ผู้แจ้งหนี้</Text>
-              <View style={styles.dateLine} />
+              <Text style={styles.dateLine}>_____/_____/__________</Text>
             </View>
           </View>
         )}
@@ -356,12 +356,12 @@ export function DocumentPdf({ data }: { data: DocumentFormData }) {
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine} />
               <Text style={styles.signatureLabel}>ผู้รับของ</Text>
-              <View style={styles.dateLine} />
+              <Text style={styles.dateLine}>_____/_____/__________</Text>
             </View>
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine} />
               <Text style={styles.signatureLabel}>ผู้ส่งของ</Text>
-              <View style={styles.dateLine} />
+              <Text style={styles.dateLine}>_____/_____/__________</Text>
             </View>
           </View>
         )}
@@ -370,7 +370,7 @@ export function DocumentPdf({ data }: { data: DocumentFormData }) {
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine} />
               <Text style={styles.signatureLabel}>ผู้รับเงิน</Text>
-              <View style={styles.dateLine} />
+              <Text style={styles.dateLine}>_____/_____/__________</Text>
             </View>
           </View>
         )}
