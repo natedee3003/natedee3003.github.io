@@ -962,10 +962,11 @@ body {
 }
 
 .customers-page__actions {
-  display: flex;
+  /* display: flex;
   gap: 0.5rem;
   justify-content: flex-end;
-  white-space: nowrap;
+  white-space: nowrap; */
+  vertical-align: top;
 }
 
 .customers-page__btn {
@@ -1020,6 +1021,18 @@ body {
 .customers-page__btn--import:hover:not(:disabled) {
   background: #ecfdf5;
   border-color: #34d399;
+}
+
+.customers-page__import-wrap {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 4px;
+}
+
+.customers-page__csv-hint {
+  font-size: 0.7rem;
+  color: #9ca3af;
 }
 
 .customers-page__btn:disabled {
