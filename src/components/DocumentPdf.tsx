@@ -33,8 +33,16 @@ export interface DocumentFormData {
   deposit: number;
 }
 
-function formatDocNo(year: number, month: number, running: number): string {
-  return `RS${year}${String(month).padStart(2, '0')}${String(running).padStart(3, '0')}`;
+const DOC_PREFIX: Record<string, string> = {
+  ใบเสนอราคา: 'QT',
+  ใบแจ้งหนี้: 'IV',
+  ใบส่งของ: 'DV',
+  ใบเสร็จรับเงิน: 'RC',
+};
+
+function formatDocNo(docType: string, year: number, month: number, running: number): string {
+  const prefix = DOC_PREFIX[docType] ?? 'RS';
+  return `${prefix}${year}${String(month).padStart(2, '0')}${String(running).padStart(3, '0')}`;
 }
 
 function formatNum(n: number): string {
@@ -217,10 +225,13 @@ const styles = StyleSheet.create({
     fontSize: 9,
     color: '#6b7280',
     textAlign: 'center',
+    marginBottom: 6,
   },
-  noteText: {
-    fontSize: 9,
-    color: '#6b7280',
+  dateLine: {
+    borderBottomWidth: 1,
+    borderBottomColor: '#9ca3af',
+    width: '70%',
+    margin: '0 auto',
   },
 });
 
@@ -228,7 +239,7 @@ export function DocumentPdf({ data }: { data: DocumentFormData }) {
   const total = data.products.reduce((sum, p) => sum + (parseFloat(p.netPrice) || 0), 0);
   const depositAmt = total * (data.deposit / 100);
   const payable = total - depositAmt;
-  const docNo = formatDocNo(data.year, data.monthNumber, data.runningNumber);
+  const docNo = formatDocNo(data.documentType[0], data.year, data.monthNumber, data.runningNumber);
   const docType = data.documentType[0];
 
   return (
@@ -294,34 +305,35 @@ export function DocumentPdf({ data }: { data: DocumentFormData }) {
         </View>
 
         {/* Summary */}
-        <View style={styles.summarySection}>
-          {data.deposit > 0 && (
-            <>
-              <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>รวมทั้งหมด</Text>
-                <Text style={styles.summaryValue}>{formatNum(total)}</Text>
-              </View>
-              <View style={styles.summaryRow}>
-                <Text style={styles.summaryLabel}>หักมัดจำ {data.deposit}%</Text>
-                <Text style={styles.summaryValue}>-{formatNum(depositAmt)}</Text>
-              </View>
-            </>
-          )}
-          <View style={styles.summaryTotalRow}>
-            <Text style={styles.summaryTotalLabel}>ยอดชำระ </Text>
-            <Text style={styles.summaryTotalValue}>{formatNum(payable)}</Text>
+        {!data.documentType.includes('ใบเสนอราคา') && (
+          <View style={styles.summarySection}>
+            {data.deposit > 0 && (
+              <>
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>รวมทั้งหมด</Text>
+                  <Text style={styles.summaryValue}>{formatNum(total)}</Text>
+                </View>
+                <View style={styles.summaryRow}>
+                  <Text style={styles.summaryLabel}>หักมัดจำ {data.deposit}%</Text>
+                  <Text style={styles.summaryValue}>-{formatNum(depositAmt)}</Text>
+                </View>
+              </>
+            )}
+            <View style={styles.summaryTotalRow}>
+              <Text style={styles.summaryTotalLabel}>ยอดชำระ </Text>
+              <Text style={styles.summaryTotalValue}>{formatNum(payable)}</Text>
+            </View>
           </View>
-        </View>
+        )}
 
         {/* Signatures */}
         {docType === 'ใบเสนอราคา' && (
           <View style={styles.signatureSection}>
-            <View style={{ width: '55%', justifyContent: 'flex-end' }}>
-              <Text style={styles.noteText}>หมายเหตุ: ค่ามัดจำล่วงหน้า 30% เครดิต 15 วัน</Text>
-            </View>
+            {/* <View/> */}
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine} />
               <Text style={styles.signatureLabel}>ผู้เสนอราคา</Text>
+              <View style={styles.dateLine} />
             </View>
           </View>
         )}
@@ -330,10 +342,12 @@ export function DocumentPdf({ data }: { data: DocumentFormData }) {
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine} />
               <Text style={styles.signatureLabel}>ผู้รับแจ้งหนี้</Text>
+              <View style={styles.dateLine} />
             </View>
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine} />
               <Text style={styles.signatureLabel}>ผู้แจ้งหนี้</Text>
+              <View style={styles.dateLine} />
             </View>
           </View>
         )}
@@ -342,10 +356,12 @@ export function DocumentPdf({ data }: { data: DocumentFormData }) {
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine} />
               <Text style={styles.signatureLabel}>ผู้รับของ</Text>
+              <View style={styles.dateLine} />
             </View>
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine} />
               <Text style={styles.signatureLabel}>ผู้ส่งของ</Text>
+              <View style={styles.dateLine} />
             </View>
           </View>
         )}
@@ -354,6 +370,7 @@ export function DocumentPdf({ data }: { data: DocumentFormData }) {
             <View style={styles.signatureBox}>
               <View style={styles.signatureLine} />
               <Text style={styles.signatureLabel}>ผู้รับเงิน</Text>
+              <View style={styles.dateLine} />
             </View>
           </View>
         )}
